@@ -10,12 +10,15 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    if (!username || !password) {
+    console.log(mobileNumber, "username")
+    console.log(password, "=password")
+    if (!mobileNumber || !password) {
       setErrorMsg("All fields are required!");
       return null
     } else {
@@ -27,7 +30,7 @@ const LoginPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            username,
+            mobileNumber,
             password,
           }),
         });
@@ -60,6 +63,7 @@ const LoginPage = () => {
           setUsername={setUsername}
           password={password}
           setPassword={setPassword}
+          setMobileNumber={setMobileNumber}
         />
         <p>
           Don't have an account? <Link to="/signup">Sign up</Link>

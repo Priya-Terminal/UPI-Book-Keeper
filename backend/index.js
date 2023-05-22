@@ -15,7 +15,7 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use(express.json());
 app.use(cookieParser());
 
-mongoose.connect('mongodb+srv://priyaaa0112:CpLJQuyGMXFaComM@cluster0.63rfz8y.mongodb.net/UPIbookkeeper?retryWrites=true&w=majority', {
+mongoose.connect("mongodb+srv://priya:HDDVDmgaHFO3Td3Q@cluster0.r5q5r1w.mongodb.net/UPIbookkeeper?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
@@ -24,10 +24,12 @@ mongoose.connect('mongodb+srv://priyaaa0112:CpLJQuyGMXFaComM@cluster0.63rfz8y.mo
   console.error('MongoDB connection error:', error);
 });
 
-
+app.get("/", (req, res) => {
+  res.send("Hello,");
+});
 
 app.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, mobileNumber, role } = req.body;
 
   try {
     const existingUser = await User.findOne({ username });
@@ -37,7 +39,7 @@ app.post('/signup', async (req, res) => {
 
     const hashedPassword = bcrypt.hashSync(password, salt);
 
-    const newUser = new User({ username, password: hashedPassword });
+    const newUser = new User({ username, password: hashedPassword, mobileNumber, role });
     await newUser.save();
 
     res.json({ message: 'Signup successful' });
@@ -47,10 +49,10 @@ app.post('/signup', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { mobileNumber, password } = req.body;
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ mobileNumber });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -60,7 +62,7 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    const token = jwt.sign({ username: user.username }, secret);
+    const token = jwt.sign({ mobileNumber: user.mobileNumber }, secret);
 
     res.cookie('token', token).json({ message: 'Login successful' });
   } catch (error) {
@@ -69,8 +71,11 @@ app.post('/login', async (req, res) => {
 });
 
 app.listen(8000, () => {
-  console.log('Server is running on port 4000');
+  console.log('Server is running on port 8000');
 });
 
 //CpLJQuyGMXFaComM
 //mongodb+srv://priyaaa0112:<password>@cluster0.63rfz8y.mongodb.net/?retryWrites=true&w=majority
+
+
+//HDDVDmgaHFO3Td3Q
