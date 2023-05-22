@@ -1,0 +1,96 @@
+main {
+    padding: 10px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    margin: -40px 0 10px;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px;
+  }
+
+  header a {
+    text-decoration: none;
+    color: inherit;
+    justify-content: space-between;
+  }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    
+    
+  }
+  
+  .header-container h1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: right;
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  .nav-bar {
+    background-color: #ffffff;
+    padding: 10px;
+    align-items: top;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    top:0;
+    right: 0;
+    
+  }
+  
+  .nav-bar ul {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    list-style: none;
+    padding: 50;
+    margin: 10px 0 10px;
+  }
+  
+  .nav-bar ul li {
+    margin-left: 10px ;
+  }
+  
+  .nav-bar ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px 10px;
+  }
+  .nav-bar ul li:first-child {
+    margin-left: 0;
+  }
+  
+  .nav-bar ul li + li {
+    margin-left: 20px;
+    justify-content: space-between;
+  }
+  
+  .nav-bar ul li a:hover {
+    background-color: #faf8f8;
+  }
+  
+  /* Styles for the main content */
+  .App {
+    padding: 20px;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .App b {
+    color: rgb(124, 8, 93);
+    flex-direction: row;
+  }
+  
