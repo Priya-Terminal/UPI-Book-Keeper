@@ -1,4 +1,72 @@
-main {
+header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo-container h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  list-style-type: none;
+  margin-top: -50px;
+  padding: auto;
+}
+
+.header-links h1 {
+  display: flex;
+  gap: 20px;
+}
+
+.header-links li {
+  margin-left: 10px;
+}
+
+.header-links li:not(:first-child) {
+  margin-left: 10px;
+}
+
+.header-links li a {
+  color: #333;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-bottom: none; 
+}
+
+.header-links li a:hover {
+  background-color: #faf8f8;
+}
+
+
+.logo-container {
+  justify-self: start;
+}
+
+
+.App {
+  padding: 10px;
+  font-size: 18px;
+  color: #333;
+}
+
+.App b {
+  color: rgb(124, 8, 93);
+}
+
+
+/* main {
     padding: 10px;
     max-width: 700px;
     margin: 0 auto;
@@ -24,8 +92,11 @@ main {
     align-items: center;
     justify-content: space-between;
     padding: 20px;
-    
-    
+    padding: 1rem;
+  }
+
+  .logo-container {
+    flex: 1;
   }
   
   .header-container h1 {
@@ -35,6 +106,24 @@ main {
     align-items: right;
     margin: 0;
     font-size: 24px;
+  }
+
+  .header-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .header-links li {
+    margin-left: 10px;
+   
+  }
+  
+  .header-links li:first-child {
+    margin-left: 0;
   }
   
   .nav-bar {
@@ -47,6 +136,7 @@ main {
     justify-content: space-between;
     top:0;
     right: 0;
+    position: fixed;
     
   }
   
@@ -56,10 +146,15 @@ main {
     flex-direction: row;
     justify-content: space-between;
     list-style: none;
-    padding: 50;
-    margin: 10px 0 10px;
+    padding: 0;
+    margin: 0;
+    gap: 1rem;
   }
   
+  .nav-bar li {
+    margin-right: 1rem;
+  }
+
   .nav-bar ul li {
     margin-left: 10px ;
   }
@@ -83,7 +178,7 @@ main {
   }
   
   /* Styles for the main content */
-  .App {
+  /* .App {
     padding: 20px;
     font-size: 18px;
     color: #333;
@@ -92,5 +187,5 @@ main {
   .App b {
     color: rgb(124, 8, 93);
     flex-direction: row;
-  }
+  } */
   

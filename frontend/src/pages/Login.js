@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./LoginPage.css";
+
 import PageContainer from "../components/PageContainer";
 import ErrorMessage from "../components/ErrorMessage";
 import LoginUserForm from "../components/LoginUserForm";
 
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -43,6 +45,8 @@ const LoginPage = () => {
         
         setUser(data.user);
 
+        toast.success("Login successful!");
+
        
        navigate("/dashboard");
       } catch (error) {
@@ -59,8 +63,6 @@ const LoginPage = () => {
         <LoginUserForm
           onSubmit={handleLogin}
           action="Login"
-          username={username}
-          setUsername={setUsername}
           password={password}
           setPassword={setPassword}
           setMobileNumber={setMobileNumber}
@@ -69,6 +71,7 @@ const LoginPage = () => {
           Don't have an account? <Link to="/signup">Sign up</Link>
         </p>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </PageContainer>
   );
 };

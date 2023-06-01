@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tesseract from 'tesseract.js';
 import "./TextExtraction.css";
+import  extractData  from './dataextractionutils';
 
 
 function TextExtraction() {
   const [file, setFile] = useState(null);
   const [extractedText, setExtractedText] = useState("");
   const [transactionDetails, setTransactionDetails] = useState([]);
+ 
+  const providerRegexes = {
+    PhonePe: [
+      /PhonePe/g,
+    ],
+    GooglePay: [
+      /(?:UPI transaction ID).*/g,
+    ],
+    Paytm: [
+      /paytm/g,
+    ],
+    BHIM: [
+      /(UPI\s?ID|UPI\s?Ref\s?No:|UPIID)/g,
+    ],
+  };
 
   const handleFileUpload = (event) => {
     const selectedFile = event.target.files[0];
@@ -19,6 +35,7 @@ function TextExtraction() {
       .then((result) => {
         const extractedText = result.data.text;
         setExtractedText(extractedText);
+        console.log("Extracted Text:", extractedText);
         processExtractedText(extractedText);
       })
       .catch((error) => {
@@ -27,38 +44,40 @@ function TextExtraction() {
   };
 
   const processExtractedText = (extractedText) => {
-    // Extracting  transaction details using regex or string manipulation techniques
-    const amountRegex = /Amount:\s+(\d+\.\d+)/;
-    const dateRegex = /Date:\s+(\d{2}\/\d{2}\/\d{4})/;
-    const timeRegex = /Time:\s+(\d{2}:\d{2}:\d{2})/;
-    const payerRegex = /Payer:\s+(.+)/;
-
     const transactions = [];
-
-    // Spliting the extracted text into lines
+    console.log("Processing Extracted Text...");
+   
     const lines = extractedText.split('\n');
 
-    // Processing each line to extract transaction details
-    lines.forEach((line) => {
-      const amountMatch = line.match(amountRegex);
-      const dateMatch = line.match(dateRegex);
-      const timeMatch = line.match(timeRegex);
-      const payerMatch = line.match(payerRegex);
 
-      if (amountMatch && dateMatch && timeMatch && payerMatch) {
-        const transaction = {
-          amount: parseFloat(amountMatch[1]),
-          date: dateMatch[1],
-          time: timeMatch[1],
-          payerName: payerMatch[1]
-        };
-        transactions.push(transaction);
-      }
+   
+  lines.forEach((line) => {
+   
+    Object.entries(providerRegexes).forEach(([provider, regexes]) => {
+      regexes.forEach((regex) => {
+        const matches = line.matchAll(regex);
+          for (const match of matches) {
+            const group1 = match[1];
+            transactions.push({
+              provider: provider,
+              match: match[0],
+              group1: group1 || ""
+            });
+            console.log("Match found:", match[0]);
+          }
+        });
+      });
     });
 
-    // Update the transactionDetails state with the extracted transactions
+    console.log("Transaction Details:", transactions);
+
+
     setTransactionDetails(transactions);
   };
+
+  useEffect(() => {
+    extractData("Payment to PhonePe, UPI transaction ID: 123456, UPI Ref No: 789012, UPIID, paytm");
+  }, []);
 
   return (
     <div>
@@ -78,19 +97,17 @@ function TextExtraction() {
           <table>
             <thead>
               <tr>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Payer's Name</th>
+              <th>Provider</th>
+              <th>Match</th>
+              <th>Group 1</th>
               </tr>
             </thead>
             <tbody>
               {transactionDetails.map((transaction, index) => (
                 <tr key={index}>
-                  <td>{transaction.amount}</td>
-                  <td>{transaction.date}</td>
-                  <td>{transaction.time}</td>
-                  <td>{transaction.payerName}</td>
+                  <td>{transaction.provider}</td>
+                  <td>{transaction.match}</td>
+                  <td>{transaction.group1}</td>
                 </tr>
               ))}
             </tbody>

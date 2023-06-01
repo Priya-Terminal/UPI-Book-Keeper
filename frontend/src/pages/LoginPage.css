@@ -54,3 +54,34 @@
   p a:hover {
     text-decoration: underline;
   }
+
+  
+.ToastContainer {
+  font-family: Arial, sans-serif;
+}
+
+
+.Toastify__toast-body {
+  padding: 12px;
+}
+
+
+.Toastify__toast--success {
+  background-color: #4caf50;
+}
+
+
+.Toastify__toast--error {
+  background-color: #f44336;
+}
+
+.Toastify__toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.Toastify__toast-body {
+  color: #fff;
+}

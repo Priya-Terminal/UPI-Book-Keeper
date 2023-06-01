@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./SignupPage.css";
 
 import PageContainer from "../components/PageContainer";
@@ -42,8 +44,8 @@ const SignupPage = () => {
           throw new Error(data.message);
         }
 
-        // Handle successful signup
-        console.log("Signup successful!");
+        
+        toast.success("Signup successful!");
 
       } catch (error) {
         setErrorMsg(error.message);
@@ -77,6 +79,7 @@ const SignupPage = () => {
           </p>
         </div>
       </main>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </PageContainer>
   );
 };
