@@ -24,6 +24,18 @@ function TextExtraction() {
     ],
   };
 
+  const identifyProvider = (extractedText) => {
+    const providers = ["paytm", "phonepe", "googlepay", "bhim"];
+
+    for (const provider of providers) {
+      if (extractedText.toLowerCase().includes(provider)) {
+        return provider;
+      }
+    }
+
+    return null; 
+  };
+
   const handleFileUpload = (event) => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
@@ -49,33 +61,25 @@ function TextExtraction() {
    
     const lines = extractedText.split('\n');
 
-
-   
   lines.forEach((line) => {
-   
-    Object.entries(providerRegexes).forEach(([provider, regexes]) => {
-      regexes.forEach((regex) => {
-        const matches = line.matchAll(regex);
-          for (const match of matches) {
-            const group1 = match[1];
-            transactions.push({
-              provider: provider,
-              match: match[0],
-              group1: group1 || ""
-            });
-            console.log("Match found:", match[0]);
-          }
-        });
+    const provider = identifyProvider(line);
+
+    if (provider) {
+      transactions.push({
+        provider: provider,
+        match: line,
+        group1: "" 
       });
-    });
 
-    console.log("Transaction Details:", transactions);
+      console.log("Match found:", line);
+    }
+  });
 
-
-    setTransactionDetails(transactions);
-  };
-
-  useEffect(() => {
+  console.log("Transaction Details:", transactions);
+  setTransactionDetails(transactions);
+};
+   
+ useEffect(() => {
     extractData("Payment to PhonePe, UPI transaction ID: 123456, UPI Ref No: 789012, UPIID, paytm");
   }, []);
 
