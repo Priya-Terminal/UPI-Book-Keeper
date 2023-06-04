@@ -8,7 +8,7 @@ import LoginPage from './pages/Login';
 import HistoryPage from './pages/HistoryPage';
 // import StackedBarChart from './components/History';
 // import ParentComponent from './ParentComponent'; 
-import TextExtraction from './pages/TextExtraction';
+import TextExtraction from './utils/TextExtraction';
 
 
 function App() {
