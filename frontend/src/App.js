@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
 import HistoryPage from './pages/HistoryPage';
+import axios from 'axios';
 // import StackedBarChart from './components/History';
 // import ParentComponent from './ParentComponent'; 
 import TextExtraction from './utils/TextExtraction';
@@ -54,6 +55,17 @@ function App() {
 
 function LocationAwareComponent() {
   const location = useLocation();
+
+  const sendTransactionData = async (transactionData) => {
+    try {
+      await axios.post('http://localhost:8000/api/transactions', transactionData);
+      console.log('Transaction data sent successfully');
+    } catch (error) {
+      console.error('Failed to send transaction data:', error);
+    }
+  };
+
+
 
   if (location.pathname === "/") {
     return <TextExtraction />;

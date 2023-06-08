@@ -1,4 +1,129 @@
+body {
+  background-color: #ffffff;
+}
+
 .container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+input[type="file"] {
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+input[type="file"]:hover {
+  background-color: darkgreen;
+}
+
+img {
+  max-width: 100%;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+pre {
+  background-color: #f5f5f5;
+  padding: 10px;
+  overflow: auto;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+table {
+  width: auto;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border: 1px solid #949292;
+  border-radius: 5px;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #eaf6ff;
+}
+
+/* Additional Stylish Features */
+
+input[type="file"] {
+  font-family: 'Arial', sans-serif;
+}
+
+table {
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+table th,
+table td {
+  font-family: 'Arial', sans-serif;
+}
+
+table tr:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+.container::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  table th,
+  table td {
+    padding: 8px;
+  }
+}
+
+
+
+/* .container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
@@ -6,6 +131,8 @@
   
   h1 {
     text-align: center;
+    color: #333;
+    margin-bottom: 20px;
   }
   
   input[type="file"] {
@@ -37,6 +164,9 @@
   table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
+    border: 1px solid #949292;
+    border-radius: 5px;
   }
   
   th, td {
@@ -54,9 +184,10 @@
   }
 
 table {
-  width: 100%;
+  width: auto;
   border-collapse: collapse;
   margin-top: 20px;
+  border: 1px solid #949292;
 }
 
 table th,
@@ -77,6 +208,6 @@ table tr:nth-child(even) {
 
 table tr:hover {
   background-color: #eaf6ff;
-}
+} */
 
   
