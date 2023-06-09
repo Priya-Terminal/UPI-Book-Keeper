@@ -74,7 +74,18 @@ function TextExtraction({ isUserLoggedIn }) {
 
   useEffect(() => {
     if (!shopId && localStorage.getItem("user")) {
-      setShopId(JSON.parse(localStorage.getItem("user")).shop);
+      const userItem = localStorage.getItem("user");
+      console.log("User item from localStorage:", userItem);
+
+      const parsedUser = JSON.parse(userItem);
+      console.log("Parsed user object from localStorage:", parsedUser);
+
+      if (parsedUser.shop) {
+        console.log("Shop ID from localStorage:", parsedUser.shop);
+        setShopId(parsedUser.shop);
+      } else {
+        console.log("Shop ID is not present in the user object.");
+      }
     }
 
     if (file) {
@@ -93,7 +104,7 @@ function TextExtraction({ isUserLoggedIn }) {
           console.error("Error extracting text:", error);
         });
     }
-  }, [file]);
+   }, [file, shopId]);
 
   return !isUserLoggedIn ? (
     <div>
