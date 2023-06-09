@@ -11,31 +11,30 @@ import axios from 'axios';
 // import ParentComponent from './ParentComponent'; 
 import TextExtraction from './utils/TextExtraction';
 
-
 function App() {
   return (
     <BrowserRouter>
       <div className="App">
         <header>
           <div className="header-container">
-          <div className="logo-container">
-            <h1>
-              <Link to="/" style={{ textDecoration: "none" }}>
-                UPI Book Keeper
-              </Link>
-            </h1>
-            </div>
-            <nav className="nav-bar">
-            <ul className="header-links">
+            <div className="logo-container">
               <h1>
-                <Link to="/signup" style={{ textDecoration: "none" }}>
-                  Sign Up
-                </Link>
-                <Link to="/login" style={{ textDecoration: "none" }}>
-                  Log In
+                <Link to="/" style={{ textDecoration: "none" }}>
+                  UPI Book Keeper
                 </Link>
               </h1>
-            </ul>
+            </div>
+            <nav className="nav-bar">
+              <ul className="header-links">
+                <h1>
+                  <Link to="/signup" style={{ textDecoration: "none" }}>
+                    Sign Up
+                  </Link>
+                  <Link to="/login" style={{ textDecoration: "none" }}>
+                    Log In
+                  </Link>
+                </h1>
+              </ul>
             </nav>
           </div>
         </header>
@@ -58,25 +57,18 @@ function LocationAwareComponent() {
 
   const sendTransactionData = async (transactionData) => {
     try {
-      await axios.post('http://localhost:8000/api/transactions', transactionData);
+      await axios.post('http://localhost:8000/transactions', transactionData);
       console.log('Transaction data sent successfully');
     } catch (error) {
       console.error('Failed to send transaction data:', error);
     }
   };
 
-
-
   if (location.pathname === "/") {
-    return <TextExtraction />;
+    return <TextExtraction onTransactionData={sendTransactionData} />;
   }
 
   return <h2>Hello! Welcome to the application.</h2>;
 }
 
 export default App;
-
-
-
-
-

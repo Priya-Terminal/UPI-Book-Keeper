@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { extractTextFromImage, identifyProvider, extractData } from './textExtractionUtils';
 import './TextExtraction.css';
+import axios from 'axios';
 
 function TextExtraction() {
   const [file, setFile] = useState(null);
@@ -18,12 +19,22 @@ function TextExtraction() {
           const data = extractData(result, provider);
           if (data) {
             setTransactionDetails(data);
+            sendTransactionData(data);
           }
         }
       )
       .catch((error) => {
         console.error('Error extracting text:', error);
       });
+  };
+ 
+  const sendTransactionData = async (transactionData) => {
+    try {
+      await axios.post('/backend/routes/transactions', transactionData);
+      console.log('Transaction data sent successfully');
+    } catch (error) {
+      console.error('Failed to send transaction data:', error);
+    }
   };
 
   return (

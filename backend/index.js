@@ -2,11 +2,13 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const User = require('./models/user')
+const Transaction = require('./models/transaction');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const transactionsRouter = require('./routes/transactions');
 
 const salt = bcrypt.genSaltSync(10);
 const secret = 'asdfghjklp42rfghjnmdk678jnhbz';
@@ -25,8 +27,13 @@ mongoose.connect("mongodb+srv://priya:HDDVDmgaHFO3Td3Q@cluster0.r5q5r1w.mongodb.
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello,");
+  res.send("Hello");
 });
+
+app.use('/transactions', transactionsRouter);
+
+console.log('Transactions router is set up');
+
 
 app.post('/signup', async (req, res) => {
   const { username, password, mobileNumber, role } = req.body;
@@ -69,6 +76,21 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Login failed' });
   }
 });
+
+
+
+// app.get('/transactions', async (req, res) => {
+//   try {
+    
+//     const transactions = await Transaction.find();
+
+//     res.status(200).json(transactions);
+//   } catch (error) {
+//     console.error('Error fetching transactions:', error);
+//     res.status(500).json({ error: 'Error fetching transactions' });
+//   }
+// });
+
 
 app.listen(8000, () => {
   console.log('Server is running on port 8000');
