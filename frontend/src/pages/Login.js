@@ -8,8 +8,7 @@ import PageContainer from "../components/PageContainer";
 import ErrorMessage from "../components/ErrorMessage";
 import LoginUserForm from "../components/LoginUserForm";
 
-
-const LoginPage = () => {
+const LoginPage = ({ setIsUserLoggedIn }) => {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -17,14 +16,13 @@ const LoginPage = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    console.log(mobileNumber, "username")
-    console.log(password, "=password")
+    console.log(mobileNumber, "username");
+    console.log(password, "=password");
     if (!mobileNumber || !password) {
       setErrorMsg("All fields are required!");
-      return null
+      return null;
     } else {
       try {
-       
         const response = await fetch("http://localhost:8000/login", {
           method: "POST",
           headers: {
@@ -41,11 +39,12 @@ const LoginPage = () => {
           throw new Error(data.message);
         }
 
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(data));
 
+        setIsUserLoggedIn(true);
         toast.success("Login successful!");
-       
-       navigate("/history");
+
+        navigate("/history");
       } catch (error) {
         setErrorMsg(error.message);
       }

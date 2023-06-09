@@ -1,70 +1,85 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import React, { useState, useEffect } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
-const data = [
-  {
-    name: 'Jan',
-    amtSpent: 2400,
-    amtReceived: 1500
-  },
-  {
-    name: 'Feb',
-    amtSpent: 1398,
-    amtReceived: 2000
-  },
-  {
-    name: 'Mar',
-    amtSpent: 9800,
-    amtReceived: 2290
-  },
-  {
-    name: 'Apr',
-    amtSpent: 3908,
-    amtReceived: 2000
-  },
-  {
-    name: 'May',
-    amtSpent: 4800,
-    amtReceived: 2181
-  },
-  {
-    name: 'Jun',
-    amtSpent: 3800,
-    amtReceived: 2500
-  },
-  {
-    name: 'Jul',
-    amtSpent: 4300,
-    amtReceived: 2100
-  },
-  {
-    name: 'Aug',
-    amtSpent: 2400,
-    amtReceived: 1500
-  },
-  {
-    name: 'Sep',
-    amtSpent: 1398,
-    amtReceived: 2000
-  },
-  {
-    name: 'Oct',
-    amtSpent: 9800,
-    amtReceived: 2290
-  },
-  {
-    name: 'Nov',
-    amtSpent: 3908,
-    amtReceived: 2000
-  },
-  {
-    name: 'Dec',
-    amtSpent: 4800,
-    amtReceived: 2181
-  },
-];
+// this function takes all the data and aggregates it by day/month/year
+// and returns an array of objects with the aggregated data
+// type can be day, month or year
+// output format: [{period: "01", amount: 100}, ...] if day
+// output format: [{period: "Jan", amount: 100}, ...] if month
+// output format: [{period: "2021", amount: 100}, ...] if year
+const aggregateData = (data, type) => {
+  const aggregatedData = [];
+  const date = new Date();
+  const currentYear = date.getFullYear();
+  const currentMonth = date.getMonth();
+  const currentDay = date.getDate();
+
+  // if type is day, aggregate by day
+  if (type === "day") {
+    for (let i = 1; i <= currentDay; i++) {
+      let amount = 0;
+      data.forEach((transaction) => {
+        const transactionDate = new Date(transaction.date);
+        if (transactionDate.getDate() === i) {
+          amount += transaction.amount;
+        }
+      });
+      aggregatedData.push({ period: i, amount });
+    }
+  } else if (type === "month") {
+    for (let i = 0; i <= currentMonth; i++) {
+      let amount = 0;
+      data.forEach((transaction) => {
+        const transactionDate = new Date(transaction.date);
+        if (transactionDate.getMonth() === i) {
+          amount += transaction.amount;
+        }
+      });
+      aggregatedData.push({ period: i, amount });
+    }
+  } else if (type === "year") {
+    for (let i = 2021; i <= currentYear; i++) {
+      let amount = 0;
+      data.forEach((transaction) => {
+        const transactionDate = new Date(transaction.date);
+        if (transactionDate.getFullYear() === i) {
+          amount += transaction.amount;
+        }
+      });
+      aggregatedData.push({ period: i, amount });
+    }
+  }
+  console.log(aggregatedData);
+  return aggregatedData;
+};
 
 function StackedBarChart() {
+  const [data, setData] = useState([]);
+  const [type, setType] = useState("day");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/transaction");
+        const data = await response.json();
+        setData(data);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="chart-container">
       <h2>Monthly Transactions</h2>
@@ -74,37 +89,57 @@ function StackedBarChart() {
             <BarChart
               width={500}
               height={300}
-              data={data}
+              data={aggregateData(data, type)}
               margin={{
-                top: 5, right: 30, left: 20, bottom: 5,
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
               }}
             >
               {/* Chart components */}
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="period" />
+              <YAxis dataKey="amount" />
               <Tooltip />
               <Legend />
-              <Bar dataKey="amtSpent" stackId="a" fill="#ff69b4" />
-              <Bar dataKey="amtReceived" stackId="a" fill="#3f51b5" />
+              <Bar dataKey="amount" stackId="a" fill="#3f51b5" />
             </BarChart>
           </ResponsiveContainer>
+          {/* drop down to change the type of data displayed */}
+          <div className="dropdown">
+            <select value={type} onChange={(e) => setType(e.target.value)}>
+              <option value="day">Day</option>
+              <option value="month">Month</option>
+              <option value="year">Year</option>
+            </select>
+          </div>
+          <br />
+          <a href="/transaction">Add Transaction</a>
         </div>
         <div className="table">
           <table>
             <thead>
               <tr>
-                <th>Month</th>
-                <th>Amount Spent</th>
-                <th>Amount Received</th>
+                <th>Tx ID</th>
+                <th>Date</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Image</th>
               </tr>
             </thead>
             <tbody>
-              {data.map(({ name, amtSpent, amtReceived }) => (
-                <tr key={name}>
-                  <td>{name}</td>
-                  <td>{amtSpent}</td>
-                  <td>{amtReceived}</td>
+              {data.map(({ id, date, provider, status, amount, image }) => (
+                <tr key={id}>
+                  <td>{id}</td>
+                  <td>{new Date(date).toDateString()}</td>
+                  <td>{provider}</td>
+                  <td>{status}</td>
+                  <td>{amount}</td>
+                  <td>
+                    <img src={image} height={90} width={35}></img>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -116,8 +151,3 @@ function StackedBarChart() {
 }
 
 export default StackedBarChart;
-
-
-
-
-

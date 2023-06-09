@@ -67,7 +67,7 @@ app.post('/login', async (req, res) => {
 
     const token = jwt.sign({ mobileNumber: user.mobileNumber }, secret);
 
-    res.cookie('token', token).json({ message: 'Login successful' });
+    res.cookie('token', token);
 
     delete user.password;
     res.json(user);
