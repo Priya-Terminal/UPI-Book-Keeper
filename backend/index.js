@@ -30,11 +30,6 @@ app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-app.use('/transactions', transactionsRouter);
-
-console.log('Transactions router is set up');
-
-
 app.post('/signup', async (req, res) => {
   const { username, password, mobileNumber, role, shop } = req.body;
 
