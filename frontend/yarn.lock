@@ -4899,11 +4899,6 @@ file-loader@^6.2.0:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-file-type@^12.4.2:
-  version "12.4.2"
-  resolved "https://registry.yarnpkg.com/file-type/-/file-type-12.4.2.tgz#a344ea5664a1d01447ee7fb1b635f72feb6169d9"
-  integrity sha512-UssQP5ZgIOKelfsaB5CuGAL+Y+q7EmONuiwF3N5HAH0t27rvrttgi6Ra9k/+DVaY9UF6+ybxu5pOXLUdA8N7Vg==
-
 filelist@^1.0.1:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/filelist/-/filelist-1.0.4.tgz#f78978a1e944775ff9e62e744424f215e58352b5"
@@ -8680,11 +8675,6 @@ resolve-url-loader@^4.0.0:
     postcss "^7.0.35"
     source-map "0.6.1"
 
-resolve-url@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
-  integrity sha512-ZuF55hVUQaaczgOIwqWzkEcEidmlD/xl44x1UZnhOXcYuFN2S6+rcxpG+C1N3So0wvNI3DmJICUFfu2SxhBmvg==
-
 resolve.exports@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/resolve.exports/-/resolve.exports-1.1.1.tgz#05cfd5b3edf641571fd46fa608b610dda9ead999"
@@ -9535,20 +9525,18 @@ tesseract.js-core@^4.0.4:
   resolved "https://registry.yarnpkg.com/tesseract.js-core/-/tesseract.js-core-4.0.4.tgz#6710744a02cb538a83fbb7aafc2e7be204f76eb3"
   integrity sha512-MJ+vtktjAaT0681uPl6TDUPhbRbpD/S9emko5rtorgHRZpQo7R3BG7h+3pVHgn1KjfNf1bvnx4B7KxEK8YKqpg==
 
-tesseract.js@^4.0.6:
-  version "4.0.6"
-  resolved "https://registry.yarnpkg.com/tesseract.js/-/tesseract.js-4.0.6.tgz#2bd207deae675b8ca879ad0f0396648a0db7bc6c"
-  integrity sha512-X6dKgbK6QB+iXWcQEnPXsgXWJCAxTq4TMEMmzS4QSGXmv5isYxIrXrxcsqF7n5DYXcOBDqk/WLIWbRiB3KOQdQ==
+tesseract.js@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/tesseract.js/-/tesseract.js-4.1.0.tgz#6246aeb35f8eb7c94551554270c8c0d1c19f49eb"
+  integrity sha512-sCfWJtei6Ykc7uLiWs5H4IKDAhwsMauEVDwUiSkEpzMo4kH+7n8QDBPPNRtGJoZ4NJBf1WSlcbU+Puf64GjOfw==
   dependencies:
     bmp-js "^0.1.0"
-    file-type "^12.4.2"
     idb-keyval "^6.2.0"
     is-electron "^2.2.2"
     is-url "^1.2.4"
     node-fetch "^2.6.9"
     opencollective-postinstall "^2.0.3"
     regenerator-runtime "^0.13.3"
-    resolve-url "^0.2.1"
     tesseract.js-core "^4.0.4"
     wasm-feature-detect "^1.2.11"
     zlibjs "^0.3.1"
