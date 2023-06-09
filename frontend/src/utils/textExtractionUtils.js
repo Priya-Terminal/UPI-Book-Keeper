@@ -1,25 +1,32 @@
-import Tesseract from 'tesseract.js';
-import { extractPaytmData } from '../providers/paytm';
-import { extractPhonePeData } from '../providers/phonepe';
-import { extractGooglePayData } from '../providers/googlepay';
-import { extractBhimData } from '../providers/bhim';
+import Tesseract from "tesseract.js";
+import { extractPaytmData } from "./providers/paytm";
+import { extractPhonePeData } from "./providers/phonepe";
+import { extractGooglePayData } from "./providers/googlepay";
+import { extractBhimData } from "./providers/bhim";
 
 export async function extractTextFromImage(image) {
   try {
-    const { data } = await Tesseract.recognize(image, 'eng' );
+    const { data } = await Tesseract.recognize(image, "eng");
     return data.text;
   } catch (error) {
-    console.error('Error extracting text from image:', error);
+    console.error("Error extracting text from image:", error);
     throw error;
   }
 }
 
 export function identifyProvider(extractedText) {
-  const providers = ["paytm", "phonepe", "googlepay", "bhim"];
+  const providerPatterns = {
+    paytm: [/paytm/, /Paytm/, /UPI Ref No: \d+/],
+    phonepe: [/phonepe/, /phone pe/],
+    googlepay: [/google pay/, /gpay/, /g pay/, /UPI transaction ID/],
+    bhim: [/bhim/, /remarks/i, /transaction id/i],
+  };
 
-  for (const provider of providers) {
-    if (extractedText.toLowerCase().includes(provider)) {
-      return provider;
+  for (let provider in providerPatterns) {
+    for (let pattern of providerPatterns[provider]) {
+      if (pattern.test(extractedText)) {
+        return provider;
+      }
     }
   }
 
@@ -27,41 +34,29 @@ export function identifyProvider(extractedText) {
 }
 
 export function extractData(extractedText, provider) {
-    console.log(provider,"hi" )
-    extractedText = extractedText.replace(/\n/g, " ")
-    console.log(extractedText)
-    const providers = ["paytm", "phonepe", "googlepay", "bhim"];
-    let result = [];
-    providers.forEach((provider,index, arr) => {
-         {
-            if(provider === "paytm") {
-                result = extractPaytmData(extractedText);
-                console.log(result,'paytm');
-            }
-            else if (provider === 'googlepay'){
-                result = extractGooglePayData(extractedText);
-                console.log(result,'googlepay');
-            }
-            else if (provider === 'phonepe'){
-               result = extractPhonePeData(extractedText);
-               console.log(result,'phonepe');
-            }
-            else if (provider === 'bhim'){
-                result = extractBhimData(extractedText);
-                console.log(result,'bhim');
-             }
-            
-             if (result.length>0 &&  Object.keys(result[0]).length>0){
-                console.log('inside if')
-                       arr.length = index + 1;
-                    }
-    
-          }
-        
-        })
+  extractedText = extractedText.replace(/\n/g, " ");
+  console.log(extractedText);
 
-        return result;
+  let result = null;
+
+  switch (provider) {
+    case "paytm":
+      result = extractPaytmData(extractedText);
+      break;
+    case "phonepe":
+      result = extractPhonePeData(extractedText);
+      break;
+    case "googlepay":
+      result = extractGooglePayData(extractedText);
+      break;
+    case "bhim":
+      result = extractBhimData(extractedText);
+      break;
+    default:
+      break;
+  }
+
+  console.log(result);
+
+  return result;
 }
-
-    
-

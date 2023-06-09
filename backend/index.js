@@ -2,13 +2,13 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const User = require('./models/user')
-const Transaction = require('./models/transaction');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const transactionsRouter = require('./routes/transactions');
+const Transaction = require('./models/transaction');
+const Shop = require('./models/shop');
 
 const salt = bcrypt.genSaltSync(10);
 const secret = 'asdfghjklp42rfghjnmdk678jnhbz';
@@ -36,7 +36,7 @@ console.log('Transactions router is set up');
 
 
 app.post('/signup', async (req, res) => {
-  const { username, password, mobileNumber, role } = req.body;
+  const { username, password, mobileNumber, role, shop } = req.body;
 
   try {
     const existingUser = await User.findOne({ username });
@@ -46,11 +46,12 @@ app.post('/signup', async (req, res) => {
 
     const hashedPassword = bcrypt.hashSync(password, salt);
 
-    const newUser = new User({ username, password: hashedPassword, mobileNumber, role });
+    const newUser = new User({ username, password: hashedPassword, mobileNumber, role, shop });
     await newUser.save();
 
     res.json({ message: 'Signup successful' });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: 'Signup failed' });
   }
 });
@@ -72,25 +73,52 @@ app.post('/login', async (req, res) => {
     const token = jwt.sign({ mobileNumber: user.mobileNumber }, secret);
 
     res.cookie('token', token).json({ message: 'Login successful' });
+
+    delete user.password;
+    res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Login failed' });
   }
 });
 
+app.post('/shop', async (req, res) => {
+  const { name } = req.body;
+  
+  try {
+    const newShop = new Shop({ name });
+    await newShop.save();
 
+    res.json(newShop);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Failed to create shop' });
+  }
+});
 
-// app.get('/transactions', async (req, res) => {
-//   try {
+app.post('/transaction', async (req, res) => {
+  const { id, amount, date, image, provider, status } = req.body;
+
+  try {
+    const newTransaction = new Transaction({ id, amount, date, image, provider, status });
+    await newTransaction.save();
     
-//     const transactions = await Transaction.find();
+    res.json({ message: 'Transaction saved successfully' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Failed to save transaction' });
+  }
+});
 
-//     res.status(200).json(transactions);
-//   } catch (error) {
-//     console.error('Error fetching transactions:', error);
-//     res.status(500).json({ error: 'Error fetching transactions' });
-//   }
-// });
+app.get('/transaction', async (req, res) => {
+  try {
+    const { from, to } = req.query;
+    const transactions = await Transaction.find(from && to ? { date: { $gte: from, $lte: to } } : {});
 
+    res.json(transactions);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch transactions' });
+  }
+});
 
 app.listen(8000, () => {
   console.log('Server is running on port 8000');

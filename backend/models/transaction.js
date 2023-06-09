@@ -1,28 +1,37 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const transactionSchema = new mongoose.Schema({
   provider: {
     type: String,
-    required: true
+    required: true,
   },
-  transactionId: {
+  id: {
     type: String,
-    required: true
+    required: true,
   },
-  transactionAmount: {
+  amount: {
     type: Number,
-    required: true
+    required: true,
   },
-  transactionStatus: {
+  status: {
     type: String,
-    required: true
+    required: true,
   },
   date: {
-    type: Date,
-    required: true
-  }
+    type: Number,
+    required: true,
+  },
+  image: {
+    type: String,
+    required: true,
+  },
+  shop: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Shop",
+    required: true,
+  },
 });
 
-const Transaction = mongoose.model('Transaction', transactionSchema);
+const Transaction = mongoose.model("Transaction", transactionSchema);
 
 module.exports = Transaction;

@@ -9,7 +9,7 @@ import HistoryPage from './pages/HistoryPage';
 import axios from 'axios';
 // import StackedBarChart from './components/History';
 // import ParentComponent from './ParentComponent'; 
-import TextExtraction from './utils/TextExtraction';
+import TextExtraction from './components/TextExtraction';
 
 function App() {
   return (
@@ -42,8 +42,9 @@ function App() {
           <Routes>
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/historypage" element={<HistoryPage />} />
-            <Route path="/" element={<LocationAwareComponent />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/transaction" element={<TextExtraction />} />
+            <Route path="/" element={<Welcome />} />
           </Routes>
           <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
         </div>
@@ -52,22 +53,7 @@ function App() {
   );
 }
 
-function LocationAwareComponent() {
-  const location = useLocation();
-
-  const sendTransactionData = async (transactionData) => {
-    try {
-      await axios.post('http://localhost:8000/transactions', transactionData);
-      console.log('Transaction data sent successfully');
-    } catch (error) {
-      console.error('Failed to send transaction data:', error);
-    }
-  };
-
-  if (location.pathname === "/") {
-    return <TextExtraction onTransactionData={sendTransactionData} />;
-  }
-
+function Welcome() {
   return <h2>Hello! Welcome to the application.</h2>;
 }
 

@@ -3,6 +3,8 @@ import React from "react";
 const UserForm = ({
   onSubmit,
   action,
+  shopname,
+  setShopname,
   username,
   setUsername,
   mobileNumber,
@@ -16,6 +18,15 @@ const UserForm = ({
 }) => {
   return (
     <form onSubmit={onSubmit}>
+      <div className="form-group">
+        <label htmlFor="username">Shop name:</label>
+        <input
+          type="text"
+          id="shopname"
+          value={shopname}
+          onChange={(e) => setShopname(e.target.value)}
+        />
+      </div>
       <div className="form-group">
         <label htmlFor="username">Username:</label>
         <input

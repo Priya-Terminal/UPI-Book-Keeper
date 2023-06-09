@@ -10,6 +10,7 @@ import UserForm from "../components/SignupUserForm";
 
 
 const SignupPage = () => {
+  const [shopname, setShopname] = useState("");
   const [username, setUsername] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [role, setRole] = useState("");
@@ -25,6 +26,23 @@ const SignupPage = () => {
       setErrorMsg("Passwords do not match");
     } else {
       try {
+        const shopCreationResponse = await fetch("http://localhost:8000/shop", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: shopname,
+          }),
+        });
+
+        if (!shopCreationResponse.ok) {
+          throw new Error("Shop creation failed!");
+        }
+
+        const { _id } = await shopCreationResponse.json();
+
+
         const response = await fetch("http://localhost:8000/signup", {
           method: "POST",
           headers: {
@@ -35,6 +53,7 @@ const SignupPage = () => {
             mobileNumber,
             role,
             password,
+            shop: _id,
           }),
         });
 
@@ -62,6 +81,8 @@ const SignupPage = () => {
           <UserForm
             onSubmit={handleSignup}
             action="Sign Up"
+            shopname={shopname}
+            setShopname={setShopname}
             username={username}
             setUsername={setUsername}
             mobileNumber={mobileNumber}

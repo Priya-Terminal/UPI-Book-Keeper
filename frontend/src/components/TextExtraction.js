@@ -1,46 +1,106 @@
-import React, { useState, useEffect } from 'react';
-import { extractTextFromImage, identifyProvider, extractData } from './textExtractionUtils';
-import './TextExtraction.css';
-import axios from 'axios';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  extractTextFromImage,
+  identifyProvider,
+  extractData,
+} from "../utils/textExtractionUtils";
+import "./TextExtraction.css";
+
+function CameraCapture({ setFile, file }) {
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    try {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
+        })
+        .catch((error) => {
+          console.error("Error accessing camera:", error);
+        });
+    } catch (error) {
+      console.error("Error in accessing camera:", error);
+    }
+  }, [file]);
+
+  const handleCaptureImage = () => {
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL("image/png");
+    setFile(dataUrl);
+    video.srcObject.getTracks().forEach((track) => track.stop());
+  };
+
+  return (
+    <div>
+      <h1>Camera Capture</h1>
+      <button onClick={handleCaptureImage}>Capture Image</button>
+      {file && (
+        <div>
+          <h2>Captured Image:</h2>
+          <img src={file} alt="Captured Image" />
+          <button onClick={() => setFile(null)}>Retake Image</button>
+        </div>
+      )}
+      <video ref={videoRef} style={{ display: file ? "none" : "block" }} />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+    </div>
+  );
+}
 
 function TextExtraction() {
+  const [shopId, setShopId] = useState(null);
   const [file, setFile] = useState(null);
-  const [extractedText, setExtractedText] = useState('');
-  const [transactionDetails, setTransactionDetails] = useState([]);
+  const [extractedText, setExtractedText] = useState("");
+  const [transactionDetails, setTransactionDetails] = useState(null);
 
   const handleFileUpload = (event) => {
     const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-    extractTextFromImage(selectedFile)
-      .then((result) => {
-        setExtractedText(result);
-        const provider = identifyProvider(result);
-        console.log(provider,"uploaded file")
+    // convert the file to data url
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedFile);
+    reader.onloadend = () => {
+      setFile(reader.result);
+    };
+
+    console.log(selectedFile);
+  };
+
+  useEffect(() => {
+    if (!shopId) {
+      setShopId(JSON.parse(localStorage.getItem("user")).shop);
+    }
+
+    if (file) {
+      console.log(file);
+      extractTextFromImage(file)
+        .then((result) => {
+          setExtractedText(result);
+          const provider = identifyProvider(result);
+          console.log(provider, "uploaded file");
           const data = extractData(result, provider);
           if (data) {
             setTransactionDetails(data);
-            sendTransactionData(data);
           }
-        }
-      )
-      .catch((error) => {
-        console.error('Error extracting text:', error);
-      });
-  };
- 
-  const sendTransactionData = async (transactionData) => {
-    try {
-      await axios.post('/backend/routes/transactions', transactionData);
-      console.log('Transaction data sent successfully');
-    } catch (error) {
-      console.error('Failed to send transaction data:', error);
+        })
+        .catch((error) => {
+          console.error("Error extracting text:", error);
+        });
     }
-  };
+  }, [file]);
 
   return (
     <div>
       <h1>Text Extraction</h1>
       <input type="file" accept="image/*" onChange={handleFileUpload} />
+      {/* take this input or have a button to access camera and try to get data from image that we get from camera by capturing the image */}
+      <CameraCapture file={file} setFile={setFile} />
 
       {extractedText && (
         <div>
@@ -49,7 +109,7 @@ function TextExtraction() {
         </div>
       )}
 
-      {transactionDetails.length > 0 && (
+      {transactionDetails && (
         <div>
           <h2>Transaction Details:</h2>
           <table>
@@ -63,15 +123,40 @@ function TextExtraction() {
               </tr>
             </thead>
             <tbody>
-              {transactionDetails.map((transaction, index) => (
-                <tr key={index}>
-                  <td>{transaction.provider}</td>
-                  <td>{transaction.transactionId}</td>
-                  <td>{transaction.transactionAmount}</td>
-                  <td>{transaction.transactionStatus}</td>
-                  <td>{transaction.date}</td>
+              <>
+                <tr>
+                  <td>{transactionDetails.provider}</td>
+                  <td>{transactionDetails.id}</td>
+                  <td>{transactionDetails.amount}</td>
+                  <td>{transactionDetails.status}</td>
+                  <td>{transactionDetails.date}</td>
                 </tr>
-              ))}
+                <button
+                  onClick={() => {
+                    console.log(transactionDetails);
+                    fetch("http://localhost:8000/transaction", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        ...transactionDetails,
+                        image: file,
+                        shop: shopId,
+                      }),
+                    })
+                      .then((response) => response.json())
+                      .then((data) => {
+                        console.log("Success:", data);
+                      })
+                      .catch((error) => {
+                        console.error("Error:", error);
+                      });
+                  }}
+                >
+                  Upload to Database
+                </button>
+              </>
             </tbody>
           </table>
         </div>
@@ -82,11 +167,6 @@ function TextExtraction() {
 
 export default TextExtraction;
 
-
-
-
-
-
 // import React, { useState, useEffect } from 'react';
 // import Tesseract from 'tesseract.js';
 // import { extractTextFromImage } from './textExtractionUtils';
@@ -96,20 +176,19 @@ export default TextExtraction;
 // import { paytmRegex, extractPaytmData } from '../providers/paytm';
 // import "./TextExtraction.css";
 
-
 // function TextExtraction() {
 //   const [file, setFile] = useState(null);
 //   const [extractedText, setExtractedText] = useState("");
 //   const [transactionDetails, setTransactionDetails] = useState([]);
- 
+
 //   const providerRegexes = {
-//     PhonePe: 
+//     PhonePe:
 //     /(Transaction Successful|Transaction Failed)\s((?:0[1-9]|1[0-2]):(?:[0-5][0-9]) (?:am|pm) on (?:0?[1-9]|[12][0-9]|3[01]) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) 20[0-9]{2}).*?(?:(\d{4})|((\d{1,3},)?\d{1,3},\d{3})|(\d{3})).*?(Transaction ID( [A-Z0-9+]+))/gis,
-//     GooglePay: 
+//     GooglePay:
 //       /(((\d{1,3},\d{3}).*?)?(Payment failed|Completed).*?((?:Jan|Feb|Mar|Apr|May|June|July|Aug|Sep|Oct|Nov|Dec)\s\d{1,2},\s\d{4}(?:\sat)?\s\d{1,2}:\d{2}\s(?:AM|PM)|(?:0?[1-9]|[12][0-9]|3[01]) (?:Jan|Feb|Mar|Apr|May|June|July|Aug|Sep|Oct|Nov|Dec) 20[0-9]{2} (?:2[0-3]|[01][0-9]):(?:[0-5][0-9]))(.*?UPI transaction ID( [A-Z0-9+]+))?)/gis,
 //     Paytm:
 //       /(Sent Successfully|Payment Failed|Transfer Pending|Transfer Failed|Money Received).*?(?<=Rupees)(.*)(?=Only).*?((\d{2}:\d{2} [AP]M, \d{2} [A-Z][a-z]+ \d{4})|(\d{2} [A-Z][a-z]+ \d{4}, \d{2}:\d{2} [AP]M)).*?((UPI Ref(?:erence)? No:\s(\d+))|(UPI Reference ID:\s([A-Za-z0-9]+)))/gs,
-//     BHIM: 
+//     BHIM:
 //       /(FAILED|SUCCESS).*?(?:(\d{4})|((\d{1,3},)?\d{1,3},\d{3})|(\d{3})).*?(Transaction ID .*? (\d+) .*?Remarks)/gis,
 //   };
 
@@ -122,7 +201,7 @@ export default TextExtraction;
 //       }
 //     }
 
-//     return null; 
+//     return null;
 //   };
 
 //   const handleFileUpload = (event) => {
@@ -199,7 +278,7 @@ export default TextExtraction;
 //       arr.length = index + 1;
 //     }
 //     });
-  
+
 //     console.log("Transaction Details:", transactions);
 //     setTransactionDetails(transactions);
 //   };
@@ -229,7 +308,7 @@ export default TextExtraction;
 //   };
 
 //   useEffect(() => {
-    
+
 //     const extractedText = "Payment to PhonePe, UPI transaction ID: 123456, UPI Ref No: 789012, UPIID, paytm";
 //     const data = getData(extractedText);
 //     console.log("Data:", data);

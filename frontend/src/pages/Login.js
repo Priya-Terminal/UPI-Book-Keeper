@@ -14,7 +14,6 @@ const LoginPage = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -42,13 +41,11 @@ const LoginPage = () => {
           throw new Error(data.message);
         }
 
-        
-        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
         toast.success("Login successful!");
-
        
-       navigate("/dashboard");
+       navigate("/history");
       } catch (error) {
         setErrorMsg(error.message);
       }
