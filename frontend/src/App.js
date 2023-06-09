@@ -1,11 +1,6 @@
 import "./App.css";
 import React from "react";
-import {
-  BrowserRouter,
-  Link,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter, Link, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SignupPage from "./pages/Signup";
@@ -90,9 +85,12 @@ function App() {
         <div className="main-container">
           <Routes>
             <Route path="/signup" element={<SignupPage />} />
-            <Route path="/login" element={<LoginPage setIsUserLoggedIn={setIsUserLoggedIn} />} />
-            <Route path="/history" element={<HistoryPage />} />
-            <Route path="/transaction" element={<TextExtraction />} />
+            <Route
+              path="/login"
+              element={<LoginPage setIsUserLoggedIn={setIsUserLoggedIn} />}
+            />
+            <Route path="/history" element={<HistoryPage isUserLoggedIn={isUserLoggedIn} />} />
+            <Route path="/transaction" element={<TextExtraction isUserLoggedIn={isUserLoggedIn} />} />
             <Route path="/" element={<Welcome />} />
           </Routes>
           <ToastContainer

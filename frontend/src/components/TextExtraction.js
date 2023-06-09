@@ -54,7 +54,7 @@ function CameraCapture({ setFile, file }) {
   );
 }
 
-function TextExtraction() {
+function TextExtraction({ isUserLoggedIn }) {
   const [shopId, setShopId] = useState(null);
   const [file, setFile] = useState(null);
   const [extractedText, setExtractedText] = useState("");
@@ -73,7 +73,7 @@ function TextExtraction() {
   };
 
   useEffect(() => {
-    if (!shopId) {
+    if (!shopId && localStorage.getItem("user")) {
       setShopId(JSON.parse(localStorage.getItem("user")).shop);
     }
 
@@ -95,7 +95,11 @@ function TextExtraction() {
     }
   }, [file]);
 
-  return (
+  return !isUserLoggedIn ? (
+    <div>
+      <h1>Please login to view this page</h1>
+    </div>
+  ) : (
     <div>
       <h1>Text Extraction</h1>
       <input type="file" accept="image/*" onChange={handleFileUpload} />
