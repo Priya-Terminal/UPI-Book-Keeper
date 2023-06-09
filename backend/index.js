@@ -91,10 +91,10 @@ app.post('/shop', async (req, res) => {
 });
 
 app.post('/transaction', async (req, res) => {
-  const { id, amount, date, image, provider, status } = req.body;
+  const { id, amount, date, image, provider, status, shop } = req.body;
 
   try {
-    const newTransaction = new Transaction({ id, amount, date, image, provider, status });
+    const newTransaction = new Transaction({ id, amount, date, image, provider, status, shop });
     await newTransaction.save();
     
     res.json({ message: 'Transaction saved successfully' });
