@@ -16,7 +16,13 @@ export function extractGooglePayData(extractedText) {
   // convert date to timestamp
   if (date) {
     const timestamp = new Date(date).getTime();
-    transactionData.date = timestamp;
+    if (isNaN(timestamp)) {
+      transactionData.date = Date.now();
+    } else {
+      transactionData.date = timestamp;
+    }
+  } else {
+    transactionData.date = Date.now();
   }
 
   if (amount) {

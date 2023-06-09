@@ -14,8 +14,9 @@ const salt = bcrypt.genSaltSync(10);
 const secret = 'asdfghjklp42rfghjnmdk678jnhbz';
 
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
-app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 
 mongoose.connect("mongodb+srv://priya:HDDVDmgaHFO3Td3Q@cluster0.r5q5r1w.mongodb.net/UPIbookkeeper?retryWrites=true&w=majority", {
   useNewUrlParser: true,

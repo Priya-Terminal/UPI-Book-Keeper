@@ -1,10 +1,42 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import {
   extractTextFromImage,
   identifyProvider,
   extractData,
 } from "../utils/textExtractionUtils";
 import "./TextExtraction.css";
+
+function resizeImage(dataUrl, callback) {
+  // Create an image object
+  let img = new Image();
+
+  // Once the image is loaded...
+  img.onload = function() {
+    // Create a canvas and context to draw to
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext('2d');
+
+    // Calculate the best scale to fit to the max sizes
+    let scale = Math.min(450 / img.width, 800 / img.height);
+
+    // Set the canvas width and height to the scaled image size
+    canvas.width = img.width * scale;
+    canvas.height = img.height * scale;
+
+    // Draw the scaled image on the canvas
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // Get a Data URL from the canvas
+    let scaledDataUrl = canvas.toDataURL();
+
+    // Invoke the callback with the result
+    callback(scaledDataUrl);
+  };
+
+  // Start loading the image
+  img.src = dataUrl;
+}
 
 function CameraCapture({ setFile, file }) {
   const videoRef = useRef(null);
@@ -29,8 +61,11 @@ function CameraCapture({ setFile, file }) {
   const handleCaptureImage = () => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    console.log(video.videoWidth, video.videoHeight);
+    // Calculate the best scale to fit to the max sizes
+    let scale = Math.min(450 / video.videoWidth, 800 / video.videoHeight);
+    canvas.width = video.videoWidth * scale;
+    canvas.height = video.videoHeight * scale;
     canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataUrl = canvas.toDataURL("image/png");
     setFile(dataUrl);
@@ -66,7 +101,7 @@ function TextExtraction({ isUserLoggedIn }) {
     const reader = new FileReader();
     reader.readAsDataURL(selectedFile);
     reader.onloadend = () => {
-      setFile(reader.result);
+      resizeImage(reader.result, setFile);
     };
 
     console.log(selectedFile);
@@ -138,42 +173,43 @@ function TextExtraction({ isUserLoggedIn }) {
               </tr>
             </thead>
             <tbody>
-              <>
-                <tr>
-                  <td>{transactionDetails.provider}</td>
-                  <td>{transactionDetails.id}</td>
-                  <td>{transactionDetails.amount}</td>
-                  <td>{transactionDetails.status}</td>
-                  <td>{transactionDetails.date}</td>
-                </tr>
-                <button
-                  onClick={() => {
-                    console.log(transactionDetails);
-                    fetch("http://localhost:8000/transaction", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        ...transactionDetails,
-                        image: file,
-                        shop: shopId,
-                      }),
-                    })
-                      .then((response) => response.json())
-                      .then((data) => {
-                        console.log("Success:", data);
-                      })
-                      .catch((error) => {
-                        console.error("Error:", error);
-                      });
-                  }}
-                >
-                  Upload to Database
-                </button>
-              </>
+              <tr>
+                <td>{transactionDetails.provider}</td>
+                <td>{transactionDetails.id}</td>
+                <td>{transactionDetails.amount}</td>
+                <td>{transactionDetails.status}</td>
+                <td>{new Date(transactionDetails.date).toDateString()}</td>
+              </tr>
             </tbody>
           </table>
+          <button
+            onClick={() => {
+              console.log(transactionDetails);
+              fetch("http://localhost:8000/transaction", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  ...transactionDetails,
+                  image: file,
+                  shop: shopId,
+                }),
+              })
+                .then((response) => {
+                  console.log(response);
+                  return response.json()
+                })
+                .then((data) => {
+                  console.log("Success:", data);
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                });
+            }}
+          >
+            Upload to Database
+          </button>
         </div>
       )}
     </div>

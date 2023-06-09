@@ -17,7 +17,7 @@ export async function extractTextFromImage(image) {
 export function identifyProvider(extractedText) {
   const providerPatterns = {
     paytm: [/paytm/, /Paytm/, /UPI Ref No: \d+/],
-    phonepe: [/phonepe/, /phone pe/],
+    phonepe: [/phonepe/i, /phone pe/],
     googlepay: [/google pay/, /gpay/, /g pay/, /UPI transaction ID/],
     bhim: [/bhim/, /remarks/i, /transaction id/i],
   };
