@@ -26,36 +26,51 @@ const aggregateData = (data, type) => {
   // if type is day, aggregate by day
   if (type === "day") {
     for (let i = 1; i <= currentDay; i++) {
-      let amount = 0;
+      let received = 0;
+      let failed = 0;
       data.forEach((transaction) => {
         const transactionDate = new Date(transaction.date);
         if (transactionDate.getDate() === i) {
-          amount += transaction.amount;
+          if (["success", "completed"].includes(transaction.status.toLowerCase())) {
+            received += transaction.amount;
+          } else {
+            failed += transaction.amount;
+          }
         }
       });
-      aggregatedData.push({ period: i, amount });
+      aggregatedData.push({ period: i, received, failed });
     }
   } else if (type === "month") {
     for (let i = 0; i <= currentMonth; i++) {
-      let amount = 0;
+      let received = 0;
+      let failed = 0;
       data.forEach((transaction) => {
         const transactionDate = new Date(transaction.date);
         if (transactionDate.getMonth() === i) {
-          amount += transaction.amount;
+          if (["success", "completed"].includes(transaction.status.toLowerCase())) {
+            received += transaction.amount;
+          } else {
+            failed += transaction.amount;
+          }
         }
       });
-      aggregatedData.push({ period: i, amount });
+      aggregatedData.push({ period: i + 1, received, failed });
     }
   } else if (type === "year") {
     for (let i = 2021; i <= currentYear; i++) {
-      let amount = 0;
+      let received = 0;
+      let failed = 0;
       data.forEach((transaction) => {
         const transactionDate = new Date(transaction.date);
         if (transactionDate.getFullYear() === i) {
-          amount += transaction.amount;
+          if (["success", "completed"].includes(transaction.status.toLowerCase())) {
+            received += transaction.amount;
+          } else {
+            failed += transaction.amount;
+          }
         }
       });
-      aggregatedData.push({ period: i, amount });
+      aggregatedData.push({ period: i, received, failed });
     }
   }
   console.log(aggregatedData);
@@ -100,10 +115,11 @@ function StackedBarChart() {
               {/* Chart components */}
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="period" />
-              <YAxis dataKey="amount" />
+              <YAxis  />
               <Tooltip />
               <Legend />
-              <Bar dataKey="amount" stackId="a" fill="#3f51b5" />
+              <Bar dataKey="received" fill="#00b894" />
+              <Bar dataKey="failed" fill="#d63031" />
             </BarChart>
           </ResponsiveContainer>
           {/* drop down to change the type of data displayed */}
