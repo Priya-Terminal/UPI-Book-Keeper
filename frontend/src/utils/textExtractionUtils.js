@@ -6,7 +6,7 @@ import { extractBhimData } from "./providers/bhim";
 
 export async function extractTextFromImage(image) {
   try {
-    const { data } = await Tesseract.recognize(image, "eng");
+    const { data } = await Tesseract.recognize(image, 'eng');
     return data.text;
   } catch (error) {
     console.error("Error extracting text from image:", error);
@@ -25,11 +25,14 @@ export function identifyProvider(extractedText) {
   for (let provider in providerPatterns) {
     for (let pattern of providerPatterns[provider]) {
       if (pattern.test(extractedText)) {
+        console.log("Provider match:", provider);
+        console.log("Pattern match:", pattern);
         return provider;
       }
     }
   }
 
+  console.log("No provider match found");
   return null;
 }
 
@@ -51,6 +54,7 @@ export function extractData(extractedText, provider) {
       break;
     case "bhim":
       result = extractBhimData(extractedText);
+      console.log(result,"result");
       break;
     default:
       break;

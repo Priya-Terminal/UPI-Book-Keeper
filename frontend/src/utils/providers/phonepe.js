@@ -3,31 +3,22 @@ export function extractPhonePeData(extractedText) {
   const phonePeRegex =
     /(Transaction Successful|Transaction Failed)\s((?:0[1-9]|1[0-2]):(?:[0-5][0-9]) (?:am|pm) on (?:0?[1-9]|[12][0-9]|3[01]) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) 20[0-9]{2}).*?(?:(\d{4})|((\d{1,3},)?\d{1,3},\d{3})|(\d{3})).*?(Transaction ID( [A-Z0-9+]+))/gis;
 
-  const [match, status, date, amount1, amount2, , amount3, id] =
-    extractedText.match(phonePeRegex);
+    let match;
+    while ((match = phonePeRegex.exec(extractedText)) !== null) {
+      console.log("Match found:", match[0]);
 
-  const transactionData = {
-    provider: "PhonePe",
-    match,
-    id,
-    amount: amount1 || amount2 || amount3,
-    status,
-    date,
-  };
+    const transactionData = {
+      provider: "PhonePe",
+      match: match[0],
+      id: match[7],
+      amount: match[3] || match[5],
+      status: match[1],
+      date: match[2],
+    };
 
-  // convert date to timestamp
-  if (date) {
-    const timestamp = new Date(date).getTime();
-    transactionData.date = timestamp;
-
-    if (isNaN(timestamp)) {
-      transactionData.date = Date.now();
-    } else {
-      transactionData.date = timestamp;
-    }
-  } else {
-    transactionData.date = Date.now();
+    transactions.push(transactionData);
   }
 
-  return transactionData;
+  console.log("Total transactions:", transactions.length);
+  return transactions;
 }

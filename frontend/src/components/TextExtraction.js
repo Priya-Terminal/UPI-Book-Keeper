@@ -93,7 +93,7 @@ function TextExtraction({ isUserLoggedIn }) {
   const [shopId, setShopId] = useState(null);
   const [file, setFile] = useState(null);
   const [extractedText, setExtractedText] = useState("");
-  const [transactionDetails, setTransactionDetails] = useState(null);
+  const [transactionDetails, setTransactionDetails] = useState([]);
 
   const handleFileUpload = (event) => {
     const selectedFile = event.target.files[0];
@@ -131,6 +131,7 @@ function TextExtraction({ isUserLoggedIn }) {
           const provider = identifyProvider(result);
           console.log(provider, "uploaded file");
           const data = extractData(result, provider);
+          console.log(data,"data")
           if (data) {
             setTransactionDetails(data);
           }
@@ -173,13 +174,16 @@ function TextExtraction({ isUserLoggedIn }) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>{transactionDetails.provider}</td>
-                <td>{transactionDetails.id}</td>
-                <td>{transactionDetails.amount}</td>
-                <td>{transactionDetails.status}</td>
-                <td>{new Date(transactionDetails.date).toDateString()}</td>
-              </tr>
+            {transactionDetails.map((transaction, index) => (
+                <tr key={index}>
+                  <td>{transaction.provider}</td>
+                  <td>{transaction.transactionId}</td>
+                  <td>{transaction.transactionAmount}</td>
+                  <td>{transaction.transactionStatus}</td>
+                  <td>{transaction.date}</td>
+                </tr>
+              ))}
+               {/* <td>{new Date(transactionDetails.date).toDateString()}</td> */}
             </tbody>
           </table>
           <button
