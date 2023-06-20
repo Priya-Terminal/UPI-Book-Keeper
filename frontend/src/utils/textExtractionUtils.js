@@ -18,7 +18,7 @@ export function identifyProvider(extractedText) {
   const providerPatterns = {
     paytm: [/paytm/, /Paytm/, /UPI Ref No: \d+/],
     phonepe: [/phonepe/i, /phone pe/],
-    googlepay: [/google pay/, /gpay/, /g pay/, /UPI transaction ID/],
+    googlepay: [/google pay/, /gpay/, /g pay/, /UPI transaction (?:ID|D|1D)/],
     bhim: [/bhim/, /remarks/i, /transaction id/i],
   };
 
